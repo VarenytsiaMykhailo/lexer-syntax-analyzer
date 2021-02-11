@@ -6,6 +6,9 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <set>
+
+#include "token.hpp"
 
 
 using namespace std;
@@ -28,7 +31,7 @@ string normalizeProgram(string program) {
         smatch smatchComments;
         while (regex_search(program, smatchComments, regexComments)) {
             result << smatchComments.prefix(); // Все начало строки, до первого сопоставления регулярки
-            program = smatchComments.suffix(); // Оставшаяся строка, которую regex_search еще не проверил
+            program = smatchComments.suffix(); // Оставшаяся часть строки, которую regex_search еще не проверил
         }
     }
     result << program; // Дописываем остольную часть строки, в которой regex_search ничего не находит
@@ -66,6 +69,24 @@ int main() {
     cout << "Stage 2. Normalized program code:" << endl << program << endl;
     cout << "===========================================================" << endl;
 
+    tuple<vector<token>, set<token>, vector<token>> tokens;
+
 
     return 0;
 }
+
+token::token(tokenType type, std::string value): type(type), value(std::move(value)) {
+}
+
+bool token::operator< (const token &token1) const {
+    return value < token1.get_value();
+}
+
+[[nodiscard]] const tokenType &token::get_type() const {
+    return this->type;
+}
+
+[[nodiscard]] const std::string &token::get_value() const {
+    return this->value;
+}
+
