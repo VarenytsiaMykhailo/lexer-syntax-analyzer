@@ -47,6 +47,44 @@ string normalizeProgram(string program) {
 }
 
 
+tuple<vector<token>, set<token>, vector<token>> tokenize_program(const string &program) {
+    vector<string> lexemes;
+
+    regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
+
+    sregex_iterator sregex_iterator(program.begin(), program.end(), regex_tokens);
+    for (auto it = sregex_iterator, sregex_iterator_end = std::sregex_iterator(); it != sregex_iterator_end; it++) {
+        lexemes.emplace_back(it->str());
+    }
+
+    map<string, token> tokens_instances;
+    tokens_instances.emplace("(", token(tokenType::bracket_left, "("));
+    tokens_instances.emplace(")", token(tokenType::bracket_right, ")"));
+    tokens_instances.emplace("{", token(tokenType::bracket_curly_left, "{"));
+    tokens_instances.emplace("}", token(tokenType::bracket_curly_right, "}"));
+    tokens_instances.emplace(";", token(tokenType::semicolon, ";"));
+    tokens_instances.emplace("=", token(tokenType::assignment, "="));
+    tokens_instances.emplace("+", token(tokenType::plus, "+"));
+    tokens_instances.emplace("-", token(tokenType::minus, "-"));
+    tokens_instances.emplace("*", token(tokenType::multiply, "*"));
+    tokens_instances.emplace("/", token(tokenType::divide, "/"));
+    tokens_instances.emplace("return", token(tokenType::return_, "return"));
+    tokens_instances.emplace("if", token(tokenType::if_, "if"));
+    tokens_instances.emplace("else", token(tokenType::else_, "else"));
+    tokens_instances.emplace("for", token(tokenType::for_, "for"));
+    tokens_instances.emplace("do", token(tokenType::do_, "do"));
+    tokens_instances.emplace("while", token(tokenType::while_, "while"));
+    tokens_instances.emplace("<", token(tokenType::less, "<"));
+    tokens_instances.emplace(">", token(tokenType::greater, ">"));
+    tokens_instances.emplace("<=", token(tokenType::less_or_equal, "<="));
+    tokens_instances.emplace(">=", token(tokenType::greater_or_equal, ">="));
+    tokens_instances.emplace("!=", token(tokenType::not_equal, "!="));
+    tokens_instances.emplace("==", token(tokenType::equal, "=="));
+    tokens_instances.emplace(",", token(tokenType::comma, ","));
+
+}
+
+
 int main() {
 
     // Открываем файл
@@ -71,9 +109,40 @@ int main() {
 
     tuple<vector<token>, set<token>, vector<token>> tokens;
 
+    try {
+        tokens = tokenizeProgram(program);
+    } catch (const string &exception) {
+        cerr << exception << endl;
+        exit(1);
+    }
+
+    cout << "Stage 3. Lexer:" << endl;
+    for (const auto &token : get<0>(tokens)) {
+        cout << "<" << token.get_value() << ">, ";
+    }
+    cout << endl;
+    cout << "===========================================================" << endl;
+
+    cout << "Stage 4. Tables:" << endl;
+    cout << "Identifiers:" << endl;
+    for (const auto &id : get<1>(tokens)) {
+        cout << id.get_value() << ", ";
+    }
+    cout << endl;
+    cout << "Numbers:" << endl;
+    for (const auto &number : get<2>(tokens)) {
+        cout << number.get_value() << ", ";
+    }
+    cout << endl;
+    cout << "===========================================================" << endl;
+
 
     return 0;
 }
+
+
+
+
 
 token::token(tokenType type, std::string value): type(type), value(std::move(value)) {
 }
