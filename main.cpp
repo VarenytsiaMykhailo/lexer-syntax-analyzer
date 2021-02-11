@@ -47,7 +47,7 @@ string normalizeProgram(string program) {
 }
 
 
-tuple<vector<token>, set<token>, vector<token>> tokenize_program(const string &program) {
+tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &program) {
     vector<string> lexemes;
 
     regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
@@ -58,30 +58,76 @@ tuple<vector<token>, set<token>, vector<token>> tokenize_program(const string &p
     }
 
     map<string, token> tokens_instances;
-    tokens_instances.emplace("(", token(tokenType::bracket_left, "("));
-    tokens_instances.emplace(")", token(tokenType::bracket_right, ")"));
-    tokens_instances.emplace("{", token(tokenType::bracket_curly_left, "{"));
-    tokens_instances.emplace("}", token(tokenType::bracket_curly_right, "}"));
-    tokens_instances.emplace(";", token(tokenType::semicolon, ";"));
-    tokens_instances.emplace("=", token(tokenType::assignment, "="));
     tokens_instances.emplace("+", token(tokenType::plus, "+"));
     tokens_instances.emplace("-", token(tokenType::minus, "-"));
     tokens_instances.emplace("*", token(tokenType::multiply, "*"));
     tokens_instances.emplace("/", token(tokenType::divide, "/"));
-    tokens_instances.emplace("return", token(tokenType::return_, "return"));
+    tokens_instances.emplace("=", token(tokenType::assignment, "="));
+    tokens_instances.emplace("==", token(tokenType::equal, "=="));
+    tokens_instances.emplace("!=", token(tokenType::not_equal, "!="));
+    tokens_instances.emplace(">", token(tokenType::greater, ">"));
+    tokens_instances.emplace("<", token(tokenType::less, "<"));
+    tokens_instances.emplace(">=", token(tokenType::greater_or_equal, ">="));
+    tokens_instances.emplace("<=", token(tokenType::less_or_equal, "<="));
+    tokens_instances.emplace(";", token(tokenType::semicolon, ";"));
+    tokens_instances.emplace("(", token(tokenType::bracket_left, "("));
+    tokens_instances.emplace(")", token(tokenType::bracket_right, ")"));
+    tokens_instances.emplace("{", token(tokenType::bracket_curly_left, "{"));
+    tokens_instances.emplace("}", token(tokenType::bracket_curly_right, "}"));
     tokens_instances.emplace("if", token(tokenType::if_, "if"));
     tokens_instances.emplace("else", token(tokenType::else_, "else"));
+    tokens_instances.emplace("while", token(tokenType::while_, "while"));
     tokens_instances.emplace("for", token(tokenType::for_, "for"));
     tokens_instances.emplace("do", token(tokenType::do_, "do"));
-    tokens_instances.emplace("while", token(tokenType::while_, "while"));
-    tokens_instances.emplace("<", token(tokenType::less, "<"));
-    tokens_instances.emplace(">", token(tokenType::greater, ">"));
-    tokens_instances.emplace("<=", token(tokenType::less_or_equal, "<="));
-    tokens_instances.emplace(">=", token(tokenType::greater_or_equal, ">="));
-    tokens_instances.emplace("!=", token(tokenType::not_equal, "!="));
-    tokens_instances.emplace("==", token(tokenType::equal, "=="));
+    tokens_instances.emplace("return", token(tokenType::return_, "return"));
     tokens_instances.emplace(",", token(tokenType::comma, ","));
 
+    set<string> tokens_datatypes{"bool",
+                                  "signed char", "unsigned char", "char",
+                                  "signed short", "unsigned short", "short",
+                                  "signed int", "unsigned int", "int",
+                                  "signed long", "unsigned long", "long",
+                                  "float", "double", "void"
+    };
+
+    regex regex_number(R"(^[0-9]+$)");
+    regex regex_id(R"(^[a-zA-Z_][a-zA-Z0-9_]*$)");
+
+    vector<token> tokens;
+    set<token> ids;
+    vector<token> numbers;
+
+    for (auto it = lexemes.begin(); it != lexemes.end(); it++) {
+        string lexeme = *it;
+        auto tokens_instances_it = tokens_instances.find(lexeme);
+        if (tokens_instances_it != tokens_instances.end()) {
+            tokens.emplace_back(tokens_instances_it->second);
+            continue;
+        }
+        if (lexeme == "signed" || lexeme == "unsigned") {
+            it++;
+            lexeme += ' ' + *it;
+        }
+        if (tokens_datatypes.find(lexeme) != tokens_datatypes.end()) {
+            tokens.emplace_back(token(datatype, lexeme));
+            continue;
+        }
+        if (regex_match(lexeme, regex_number)) {
+            token numberToken = token(number, lexeme);
+            tokens.emplace_back(numberToken);
+            numbers.emplace_back(numberToken);
+            continue;
+        }
+        if (regex_match(lexeme, regex_id)) {
+            token idToken = token(id, lexeme);
+            tokens.emplace_back(idToken);
+            ids.emplace(idToken);
+            continue;
+        }
+        throw "Can not understand the lexeme: " + lexeme;
+    }
+
+    return make_tuple(tokens, ids, numbers);
 }
 
 
@@ -118,7 +164,7 @@ int main() {
 
     cout << "Stage 3. Lexer:" << endl;
     for (const auto &token : get<0>(tokens)) {
-        cout << "<" << token.get_value() << ">, ";
+        cout << "<" << token.get_value() << "> ";
     }
     cout << endl;
     cout << "===========================================================" << endl;
