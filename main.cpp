@@ -130,6 +130,76 @@ tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &pr
     return make_tuple(tokens, ids, numbers);
 }
 
+pair<string, size_t> rule_s(const vector<token>&, size_t);
+pair<string, size_t> rule_i(const vector<token>&, size_t);
+pair<string, size_t> rule_c(const vector<token>&, size_t);
+
+string parse(const vector<token> &tokens) {
+    auto result = rule_s(tokens, 0);
+    if (!result.first.empty()) {
+        return result.first + " at index = " + to_string(result.second);
+    }
+    if (result.second < tokens.size()) {
+        return "Error. Incorrect token at the end" + tokens[result.second].get_value();
+    }
+    return "Correct program";
+}
+
+bool check_expected(const vector<token> &tokens, size_t index, const tokenType &expected_type) {
+    return index < tokens.size() && tokens[index].get_type() == expected_type;
+}
+
+pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, datatype)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <T>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    pair<string, size_t> resultOfSubRules;
+
+    resultOfSubRules = rule_i(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_left)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <(>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_right)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <)>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_curly_left)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <{>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_c(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_curly_right)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <}>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+pair<string, size_t> rule_i(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, id)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <ID, n>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
 
 int main() {
 
@@ -146,11 +216,11 @@ int main() {
     input.close();
 
     string program = input_ss.str();
-    cout << "Stage 1. Input program code:" << endl << program << endl;
+    cout << "Input program code:" << endl << program << endl;
     cout << "===========================================================" << endl;
 
     program = normalizeProgram(program);
-    cout << "Stage 2. Normalized program code:" << endl << program << endl;
+    cout << "Stage 1. Normalized program code:" << endl << program << endl;
     cout << "===========================================================" << endl;
 
     tuple<vector<token>, set<token>, vector<token>> tokens;
@@ -162,14 +232,14 @@ int main() {
         exit(1);
     }
 
-    cout << "Stage 3. Lexer:" << endl;
+    cout << "Stage 2. Lexer:" << endl;
     for (const auto &token : get<0>(tokens)) {
         cout << "<" << token.get_value() << "> ";
     }
     cout << endl;
     cout << "===========================================================" << endl;
 
-    cout << "Stage 4. Tables:" << endl;
+    cout << "Stage 3. Tables:" << endl;
     cout << "Identifiers:" << endl;
     for (const auto &id : get<1>(tokens)) {
         cout << id.get_value() << ", ";
@@ -182,6 +252,9 @@ int main() {
     cout << endl;
     cout << "===========================================================" << endl;
 
+    cout << "Stage 4. Errors:" << endl;
+
+    cout << parse(std::get<0>(tokens));
 
     return 0;
 }
