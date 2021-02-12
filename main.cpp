@@ -192,6 +192,7 @@ pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
     return make_pair("", index);
 }
 
+
 pair<string, size_t> rule_i(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, id)) {
         return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <ID, n>" : "Wrong end of program"), index);
@@ -200,6 +201,111 @@ pair<string, size_t> rule_i(const vector<token> &tokens, size_t index) {
 
     return make_pair("", index);
 }
+
+
+pair<string, size_t> rule_n(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, number)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <D, n>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+
+pair<string, size_t> subrule_c_1(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, datatype)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <T>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    auto resultOfSubRules = rule_c1(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, semicolon)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <;>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+
+pair<string, size_t> subrule_c_2(const vector<token> &tokens, size_t index) {
+    auto resultOfSubRules = rule_c1(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, semicolon)) {
+        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <;>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+pair<string, size_t> rule_c(const vector<token> &tokens, size_t index) {
+    do {
+        auto resultOfSubRules = subrule_c_1(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_2(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_3(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_4(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_5(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_6(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_7(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        resultOfSubRules = subrule_c_8(tokens, index);
+        if (resultOfSubRules.first.empty()) {
+            index = resultOfSubRules.second;
+            continue;
+        }
+
+        break;
+    } while (true);
+
+    return make_pair("", index);
+}
+
+
 
 int main() {
 
