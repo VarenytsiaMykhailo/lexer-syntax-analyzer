@@ -169,33 +169,6 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-testFragment.obj: testFragment.cpp.obj
-
-.PHONY : testFragment.obj
-
-# target to build an object file
-testFragment.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/testFragment.cpp.obj
-.PHONY : testFragment.cpp.obj
-
-testFragment.i: testFragment.cpp.i
-
-.PHONY : testFragment.i
-
-# target to preprocess a source file
-testFragment.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/testFragment.cpp.i
-.PHONY : testFragment.cpp.i
-
-testFragment.s: testFragment.cpp.s
-
-.PHONY : testFragment.s
-
-# target to generate assembly for a file
-testFragment.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/testFragment.cpp.s
-.PHONY : testFragment.cpp.s
-
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -208,9 +181,6 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... testFragment.obj
-	@echo ... testFragment.i
-	@echo ... testFragment.s
 .PHONY : help
 
 

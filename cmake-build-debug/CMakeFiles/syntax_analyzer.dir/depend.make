@@ -4,5 +4,3 @@
 CMakeFiles/syntax_analyzer.dir/main.cpp.obj: ../main.cpp
 CMakeFiles/syntax_analyzer.dir/main.cpp.obj: ../token.hpp
 
-CMakeFiles/syntax_analyzer.dir/testFragment.cpp.obj: ../testFragment.cpp
-

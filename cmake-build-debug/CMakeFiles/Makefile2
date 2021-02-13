@@ -93,12 +93,12 @@ clean: CMakeFiles/syntax_analyzer.dir/clean
 CMakeFiles/syntax_analyzer.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\syntax_analyzer.dir\build.make CMakeFiles/syntax_analyzer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=D:\github-reps\syntax-analyzer\cmake-build-debug\CMakeFiles --progress-num=1,2,3 "Built target syntax_analyzer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=D:\github-reps\syntax-analyzer\cmake-build-debug\CMakeFiles --progress-num=1,2 "Built target syntax_analyzer"
 .PHONY : CMakeFiles/syntax_analyzer.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/syntax_analyzer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start D:\github-reps\syntax-analyzer\cmake-build-debug\CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\github-reps\syntax-analyzer\cmake-build-debug\CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/syntax_analyzer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start D:\github-reps\syntax-analyzer\cmake-build-debug\CMakeFiles 0
 .PHONY : CMakeFiles/syntax_analyzer.dir/rule

@@ -14,17 +14,54 @@
 using namespace std;
 
 
-const string inputFilePath = "D:\\github-reps\\syntax-analyzer\\testFragment.cpp";
-
-
-string normalizeProgram(string program) {
-    /*
+const string inputFilePath = "D:\\testFragment.cpp";
+/*
         R - отключает ескейп последовательности. \n? - отступ строки 0 ил и1 раз.
         //.* - однострочные комментарии | - или многострочные комментарии (* нужно экранировать т.к. служебный символ)
-    */
-    regex regexComments(R"(\n?//.*|/\*[\W\w]*?\*/)");
-    regex regexSpaces(R"([ \t]*(\W)[ \t]*)");
+*/
+const regex regexComments(R"(\n?//.*|/\*[\W\w]*?\*/)");
+const regex regexSpaces(R"([ \t]*(\W)[ \t]*)");
+regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
 
+
+// Определение прототипов функций
+
+string normalizeProgram(string);
+tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string&);
+string parse(const vector<token>&);
+bool check_expected(const vector<token>&, size_t, const tokenType&);
+string getErrorMessage(const vector<token>&, size_t, string);
+pair<string, size_t> rule_s(const vector<token>&, size_t);
+pair<string, size_t> rule_i(const vector<token>&, size_t);
+pair<string, size_t> rule_n(const vector<token>&, size_t);
+pair<string, size_t> rule_c(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_1(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_2(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_3(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_4(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_5(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_6(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_7(const vector<token> &, size_t);
+pair<string, size_t> subrule_c_8(const vector<token>&, size_t);
+pair<string, size_t> rule_c1(const vector<token>&, size_t);
+pair<string, size_t> subrule_c1_1(const vector<token>&, size_t);
+pair<string, size_t> subrule_c1_2(const vector<token>&, size_t);
+pair<string, size_t> subrule_c1_3(const vector<token>&, size_t);
+pair<string, size_t> rule_e(const vector<token>&, size_t);
+pair<string, size_t> subrule_e_1(const vector<token>&, size_t);
+pair<string, size_t> subrule_e_2(const vector<token>&, size_t);
+pair<string, size_t> subrule_e_3(const vector<token>&, size_t);
+pair<string, size_t> rule_e1(const vector<token>&, size_t);
+pair<string, size_t> rule_e2(const vector<token>&, size_t);
+pair<string, size_t> rule_c2(const vector<token>&, size_t);
+pair<string, size_t> rule_c3(const vector<token>&, size_t);
+pair<string, size_t> subrule_c3_1(const vector<token>&, size_t);
+pair<string, size_t> subrule_c3_2(const vector<token>&, size_t);
+
+
+// Реализация прототипов функций
+
+string normalizeProgram(string program) {
     stringstream result;
 
     if (regex_search(program, regexComments)) {
@@ -49,8 +86,6 @@ string normalizeProgram(string program) {
 
 tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &program) {
     vector<string> lexemes;
-
-    regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
 
     sregex_iterator sregex_iterator(program.begin(), program.end(), regex_tokens);
     for (auto it = sregex_iterator, sregex_iterator_end = std::sregex_iterator(); it != sregex_iterator_end; it++) {
@@ -131,38 +166,6 @@ tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &pr
 }
 
 
-string parse(const vector<token>&);
-bool check_expected(const vector<token>&, size_t, const tokenType&);
-string getErrorMessage(const vector<token>&, size_t, string);
-
-pair<string, size_t> rule_s(const vector<token>&, size_t);
-pair<string, size_t> rule_i(const vector<token>&, size_t);
-pair<string, size_t> rule_n(const vector<token>&, size_t);
-pair<string, size_t> rule_c(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_1(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_2(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_3(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_4(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_5(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_6(const vector<token>&, size_t);
-pair<string, size_t> subrule_c_7(const vector<token> &, size_t);
-pair<string, size_t> subrule_c_8(const vector<token>&, size_t);
-pair<string, size_t> rule_c1(const vector<token>&, size_t);
-pair<string, size_t> subrule_c1_1(const vector<token>&, size_t);
-pair<string, size_t> subrule_c1_2(const vector<token>&, size_t);
-pair<string, size_t> subrule_c1_3(const vector<token>&, size_t);
-pair<string, size_t> rule_e(const vector<token>&, size_t);
-pair<string, size_t> subrule_e_1(const vector<token>&, size_t);
-pair<string, size_t> subrule_e_2(const vector<token>&, size_t);
-pair<string, size_t> subrule_e_3(const vector<token>&, size_t);
-pair<string, size_t> rule_e1(const vector<token>&, size_t);
-pair<string, size_t> rule_e2(const vector<token>&, size_t);
-pair<string, size_t> rule_c2(const vector<token>&, size_t);
-pair<string, size_t> rule_c3(const vector<token>&, size_t);
-pair<string, size_t> subrule_c3_1(const vector<token>&, size_t);
-pair<string, size_t> subrule_c3_2(const vector<token>&, size_t);
-
-
 string parse(const vector<token> &tokens) {
     auto result = rule_s(tokens, 0);
     if (!result.first.empty()) {
@@ -171,21 +174,24 @@ string parse(const vector<token> &tokens) {
     if (result.second < tokens.size()) {
         return "Error: incorrect token at the end " + tokens[result.second].get_value();
     }
-    return "Correct program";
+    return "Program is correct.";
 }
+
 
 bool check_expected(const vector<token> &tokens, size_t index, const tokenType &expected_type) {
     return index < tokens.size() && tokens[index].get_type() == expected_type;
 }
+
 
 string getErrorMessage(const vector<token> &tokens, size_t index, string expectedToken) {
     string errorMessage = "Error: " + (index < tokens.size() ? "incorrect token " + tokens[index].get_value() + ", expected token " + expectedToken : "wrong end of program");
     return errorMessage;
 }
 
+
 pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, datatype)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <T>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<T>"), index);
     }
     index++;
 
@@ -198,17 +204,17 @@ pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
     index = resultOfSubRules.second;
 
     if (!check_expected(tokens, index, bracket_left)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <(>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<(>"), index);
     }
     index++;
 
     if (!check_expected(tokens, index, bracket_right)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <)>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<)>"), index);
     }
     index++;
 
     if (!check_expected(tokens, index, bracket_curly_left)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <{>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<{>"), index);
     }
     index++;
 
@@ -219,7 +225,7 @@ pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
     index = resultOfSubRules.second;
 
     if (!check_expected(tokens, index, bracket_curly_right)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <}>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<}>"), index);
     }
     index++;
 
@@ -229,7 +235,7 @@ pair<string, size_t> rule_s(const vector<token> &tokens, size_t index) {
 
 pair<string, size_t> rule_i(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, id)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <ID, n>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<ID, n>"), index);
     }
     index++;
 
@@ -239,7 +245,7 @@ pair<string, size_t> rule_i(const vector<token> &tokens, size_t index) {
 
 pair<string, size_t> rule_n(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, number)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <D, n>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<D, n>"), index);
     }
     index++;
 
@@ -306,7 +312,7 @@ pair<string, size_t> rule_c(const vector<token> &tokens, size_t index) {
 
 pair<string, size_t> subrule_c_1(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, datatype)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <T>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<T>"), index);
     }
     index++;
 
@@ -317,7 +323,7 @@ pair<string, size_t> subrule_c_1(const vector<token> &tokens, size_t index) {
     index = resultOfSubRules.second;
 
     if (!check_expected(tokens, index, semicolon)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <;>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<;>"), index);
     }
     index++;
 
@@ -333,7 +339,7 @@ pair<string, size_t> subrule_c_2(const vector<token> &tokens, size_t index) {
     index = resultOfSubRules.second;
 
     if (!check_expected(tokens, index, semicolon)) {
-        return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <;>" : "Wrong end of program"), index);
+        return make_pair(getErrorMessage(tokens, index, "<;>"), index);
     }
     index++;
 
@@ -571,6 +577,7 @@ pair<string, size_t> subrule_c_8(const vector<token> &tokens, size_t index) {
 
     return make_pair("", index);
 }
+
 
 pair<string, size_t> rule_c1(const vector<token> &tokens, size_t index) {
     auto resultOfSubRules = subrule_c1_1(tokens, index);
@@ -943,11 +950,11 @@ int main() {
 
     string program = input_ss.str();
     cout << "Input program code:" << endl << program << endl;
-    cout << "===========================================================" << endl;
+    cout << "===========================================================" << endl << endl;
 
     program = normalizeProgram(program);
     cout << "Stage 1. Normalized program code:" << endl << program << endl;
-    cout << "===========================================================" << endl;
+    cout << "===========================================================" << endl << endl;
 
     tuple<vector<token>, set<token>, vector<token>> tokens;
 
@@ -963,7 +970,7 @@ int main() {
         cout << "<" << token.get_value() << "> ";
     }
     cout << endl;
-    cout << "===========================================================" << endl;
+    cout << "===========================================================" << endl << endl;
 
     cout << "Stage 3. Tables:" << endl;
     cout << "Identifiers:" << endl;
@@ -976,11 +983,14 @@ int main() {
         cout << number.get_value() << ", ";
     }
     cout << endl;
-    cout << "===========================================================" << endl;
+    cout << "===========================================================" << endl << endl;
 
-    cout << "Stage 4. Errors:" << endl;
+    cout << "Stage 4. Errors checking:" << endl;
 
-    cout << parse(std::get<0>(tokens));
+    cout << parse(get<0>(tokens));
+
+    cout << endl;
+    cout << "===========================================================" << endl << endl;
 
     return 0;
 }
@@ -988,6 +998,8 @@ int main() {
 
 
 
+/*
+// Доопределение класса token
 
 token::token(tokenType type, std::string value): type(type), value(std::move(value)) {
 }
@@ -1003,4 +1015,15 @@ bool token::operator< (const token &token1) const {
 [[nodiscard]] const std::string &token::get_value() const {
     return this->value;
 }
+*/
+
+/*
+[[nodiscard]] указывает на обязательность использования результата при возврате из функции. Может быть применим как к типу (при объявлении класса или перечисления), так и непосредственно к возвращаемому типу функции. Пример:
+
+[[nodiscard]] int f() { return 42; }
+...
+f(); // сообщение о том, что результат функции не использован
+
+Явное приведение результата к void подавляет действие атрибута
+*/
 

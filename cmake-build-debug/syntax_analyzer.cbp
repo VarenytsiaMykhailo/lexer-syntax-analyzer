@@ -83,9 +83,6 @@
 		<Unit filename="D:/github-reps/syntax-analyzer/main.cpp">
 			<Option target="syntax_analyzer"/>
 		</Unit>
-		<Unit filename="D:/github-reps/syntax-analyzer/testFragment.cpp">
-			<Option target="syntax_analyzer"/>
-		</Unit>
 		<Unit filename="D:/github-reps/syntax-analyzer/token.hpp">
 			<Option target="syntax_analyzer"/>
 		</Unit>

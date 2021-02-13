@@ -5,7 +5,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "D:/github-reps/syntax-analyzer/main.cpp" "D:/github-reps/syntax-analyzer/cmake-build-debug/CMakeFiles/syntax_analyzer.dir/main.cpp.obj"
-  "D:/github-reps/syntax-analyzer/testFragment.cpp" "D:/github-reps/syntax-analyzer/cmake-build-debug/CMakeFiles/syntax_analyzer.dir/testFragment.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -41,10 +41,30 @@ private:
     std::string value;
 
 public:
-    token(tokenType, std::string);
-    bool operator< (const token &token1) const;
-    [[nodiscard]] const tokenType &get_type() const;
-    [[nodiscard]] const std::string &get_value() const;
+    token(tokenType type, std::string value): type(type), value(std::move(value)) {
+    }
+
+    bool operator< (const token &token1) const {
+        return value < token1.get_value();
+    }
+
+    [[nodiscard]] const tokenType &get_type() const {
+        return this->type;
+    }
+
+    [[nodiscard]] const std::string &get_value() const{
+        return this->value;
+    }
 };
 
 #endif //SYNTAX_ANALYZER_TOKEN_HPP
+
+/*
+[[nodiscard]] указывает на обязательность использования результата при возврате из функции. Может быть применим как к типу (при объявлении класса или перечисления), так и непосредственно к возвращаемому типу функции. Пример:
+
+[[nodiscard]] int f() { return 42; }
+...
+f(); // сообщение о том, что результат функции не использован
+
+Явное приведение результата к void подавляет действие атрибута
+*/
