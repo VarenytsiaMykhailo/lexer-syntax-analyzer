@@ -14,15 +14,19 @@
 using namespace std;
 
 
-const string inputFilePath = "D:\\testFragment.cpp";
+const static string inputFilePath = "D:\\testFragment.cpp";
+
+// Определение регулярных выражений
 /*
         R - отключает ескейп последовательности. \n? - отступ строки 0 ил и1 раз.
         //.* - однострочные комментарии | - или многострочные комментарии (* нужно экранировать т.к. служебный символ)
 */
-const regex regexComments(R"(\n?//.*|/\*[\W\w]*?\*/)");
-const regex regexSpaces(R"([ \t]*(\W)[ \t]*)");
-regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
-
+const static regex regexComments(R"(\n?//.*|/\*[\W\w]*?\*/)");
+const static regex regexSpaces(R"([ \t]*(\W)[ \t]*)");
+const static regex regex_tokens(R"(<=|>=|==|!=|[(){};=+\-*/<>=!,]|[^ \n\t(){};=+\-*/<>=!,]+)");
+//const static regex regex_number(R"(^[0-9]+$)");
+const static regex regex_number(R"(^[0-9]+|[0-9]+.[0-9]*$)");
+const static regex regex_id(R"(^[a-zA-Z_][a-zA-Z0-9_]*$)");
 
 // Определение прототипов функций
 
@@ -122,11 +126,10 @@ tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &pr
                                   "signed short", "unsigned short", "short",
                                   "signed int", "unsigned int", "int",
                                   "signed long", "unsigned long", "long",
-                                  "float", "double", "void"
+                                  "float",
+                                  "double",
+                                  "void"
     };
-
-    regex regex_number(R"(^[0-9]+$)");
-    regex regex_id(R"(^[a-zA-Z_][a-zA-Z0-9_]*$)");
 
     vector<token> tokens;
     set<token> ids;
@@ -159,7 +162,8 @@ tuple<vector<token>, set<token>, vector<token>> tokenizeProgram(const string &pr
             ids.emplace(idToken);
             continue;
         }
-        throw "Can not understand the lexeme: " + lexeme;
+
+        throw "Can not recognize the lexeme: " + lexeme; // Если лексема не распознается
     }
 
     return make_tuple(tokens, ids, numbers);
