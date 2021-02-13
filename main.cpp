@@ -141,10 +141,12 @@ pair<string, size_t> rule_n(const vector<token>&, size_t);
 pair<string, size_t> rule_c(const vector<token>&, size_t);
 pair<string, size_t> subrule_c_1(const vector<token>&, size_t);
 pair<string, size_t> subrule_c_2(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_3(const vector<token>&, size_t);
+pair<string, size_t> subrule_c_4(const vector<token>&, size_t);
 pair<string, size_t> rule_c1(const vector<token>&, size_t);
 pair<string, size_t> subrule_c1_1(const vector<token>&, size_t);
 pair<string, size_t> subrule_c1_2(const vector<token>&, size_t);
-
+pair<string, size_t> subrule_c1_3(const vector<token>&, size_t);
 
 string parse(const vector<token> &tokens) {
     auto result = rule_s(tokens, 0);
@@ -162,7 +164,7 @@ bool check_expected(const vector<token> &tokens, size_t index, const tokenType &
 }
 
 string getErrorMessage(const vector<token> &tokens, size_t index, string expectedToken) {
-    string errorMessage = "Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token " + expectedToken : "Wrong end of program";
+    string errorMessage = "Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token " + expectedToken : "Wrong end of program");
     return errorMessage;
 }
 
@@ -287,8 +289,6 @@ pair<string, size_t> rule_c(const vector<token> &tokens, size_t index) {
 }
 
 
-
-
 pair<string, size_t> subrule_c_1(const vector<token> &tokens, size_t index) {
     if (!check_expected(tokens, index, datatype)) {
         return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <T>" : "Wrong end of program"), index);
@@ -319,6 +319,112 @@ pair<string, size_t> subrule_c_2(const vector<token> &tokens, size_t index) {
 
     if (!check_expected(tokens, index, semicolon)) {
         return make_pair("Error. " + (index < tokens.size() ? "Incorrect token " + tokens[index].get_value() + ", expected token <;>" : "Wrong end of program"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+
+pair<string, size_t> subrule_c_3(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, for_)) {
+        return make_pair(getErrorMessage(tokens, index, "<for>"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_left)) {
+        return make_pair(getErrorMessage(tokens, index, "<(>"), index);
+    }
+    index++;
+
+    auto resultOfSubRules = rule_c1(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, semicolon)) {
+        return make_pair(getErrorMessage(tokens, index, "<;>"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_c2(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, semicolon)) {
+        return make_pair(getErrorMessage(tokens, index, "<;>"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_c1(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_right)) {
+        return make_pair(getErrorMessage(tokens, index, "<)>"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_curly_left)) {
+        return make_pair(getErrorMessage(tokens, index, "<{>"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_c(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_curly_right)) {
+        return make_pair(getErrorMessage(tokens, index, "<}>"), index);
+    }
+    index++;
+
+    return make_pair("", index);
+}
+
+
+pair<string, size_t> subrule_c_4(const vector<token> &tokens, size_t index) {
+    if (!check_expected(tokens, index, while_)) {
+        return make_pair(getErrorMessage(tokens, index, "<while>"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_left)) {
+        return make_pair(getErrorMessage(tokens, index, "<(>"), index);
+    }
+    index++;
+
+    auto resultOfSubRules = rule_c2(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_right)) {
+        return make_pair(getErrorMessage(tokens, index, "<)>"), index);
+    }
+    index++;
+
+    if (!check_expected(tokens, index, bracket_curly_left)) {
+        return make_pair(getErrorMessage(tokens, index, "<{>"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_c(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, bracket_curly_right)) {
+        return make_pair(getErrorMessage(tokens, index, "<}>"), index);
     }
     index++;
 
@@ -399,6 +505,28 @@ pair<string, size_t> subrule_c1_2(const vector<token> &tokens, size_t index) {
     index++;
 
     resultOfSubRules = rule_c1(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    return make_pair("", index);
+}
+
+
+pair<string, size_t> subrule_c1_3(const vector<token> &tokens, size_t index) {
+    auto resultOfSubRules = rule_i(tokens, index);
+    if (!resultOfSubRules.first.empty()) {
+        return resultOfSubRules;
+    }
+    index = resultOfSubRules.second;
+
+    if (!check_expected(tokens, index, assignment)) {
+        return make_pair(getErrorMessage(tokens, index, "<=>"), index);
+    }
+    index++;
+
+    resultOfSubRules = rule_e(tokens, index);
     if (!resultOfSubRules.first.empty()) {
         return resultOfSubRules;
     }
