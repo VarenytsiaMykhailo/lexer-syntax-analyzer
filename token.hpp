@@ -1,6 +1,3 @@
-//
-// Created by MIKE on 11.02.2021.
-//
 
 #ifndef SYNTAX_ANALYZER_TOKEN_HPP
 #define SYNTAX_ANALYZER_TOKEN_HPP
@@ -41,18 +38,22 @@ private:
     std::string value;
 
 public:
-    token(tokenType type, std::string value): type(type), value(std::move(value)) {
+    token(tokenType type, std::string value): type(type), value(std::move(value))
+    {
     }
 
-    bool operator< (const token &token1) const {
+    bool operator< (const token &token1) const
+    {
         return value < token1.get_value();
     }
 
-    [[nodiscard]] const tokenType &get_type() const {
+    [[nodiscard]] const tokenType &get_type() const
+    {
         return this->type;
     }
 
-    [[nodiscard]] const std::string &get_value() const{
+    [[nodiscard]] const std::string &get_value() const
+    {
         return this->value;
     }
 };
